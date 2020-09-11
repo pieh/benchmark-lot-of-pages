@@ -33,7 +33,7 @@
     "benchmark": "^2.1.4",
     "faker": "^4.1.0",
     "fs-extra": "^9.0.1",
-    "gatsby": "^2",
+    "gatsby": "^2.24.57",
     "gatsby-source-filesystem": "^2",
     "gatsby-transformer-remark": "^2",
     "globby": "^11.0.1",
