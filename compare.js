@@ -33,7 +33,12 @@ async function runCompare() {
   const results = {};
 
   for (const [type, fn] of Object.entries(finders)) {
-    results[type] = await fn();
+    const result = await fn();
+    if (Array.isArray(result)) {
+      results[type] = new Set(result);
+    } else {
+      results[type] = result;
+    }
   }
 
   let areAllTheSameResults = true;
@@ -60,10 +65,13 @@ async function runCompare() {
 
   console.log("Running benchmark");
 
-  const suite = new Benchmark.Suite();
+  const suite = new Benchmark.Suite({
+    minSamples: 150,
+  });
 
   for (const [type, fn] of Object.entries(finders)) {
     suite.add(type, {
+      minSamples: 150,
       defer: true,
       fn: async (deferred) => {
         await fn();
