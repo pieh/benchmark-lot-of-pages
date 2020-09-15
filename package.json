@@ -11,6 +11,8 @@
     "build": "gatsby build",
     "clean": "gatsby clean",
     "develop": "gatsby develop",
+    "blah": "if is-ci; then echo \"yay\"; else echo 'nay'; fi",
+    "zzz": "is-ci",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\""
   },
   "devDependencies": {

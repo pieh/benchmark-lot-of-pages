@@ -71,19 +71,52 @@ exports.onPreBootstrap = () => {
 
 exports.onPostBuild = async ({ reporter }) => {
   const N = parseInt(process.env.N, 10) || 100;
-  const progress = reporter.createProgress(`cloning page-data`, N);
+  const MAX_DEPTH = parseInt(process.env.MAX_DEPTH, 10) || 4;
+  const MAX_SIBLINGS = Math.sqrt(N);
+
+  const progress = reporter.createProgress(`cloning page-data`, N - 1);
   progress.start();
 
+  let previousPath,
+    currentDepth = 0,
+    currentMaxDepth,
+    currentSibling = 0,
+    currentMaxSibling = 0;
+
   for (let i = 1; i < N; i++) {
+    let outputPath;
+    let currentSlug = faker.helpers
+      .slugify(faker.lorem.sentence())
+      .toLowerCase();
+    if (currentDepth === 0) {
+      outputPath = `public/page-data/${currentSlug}`;
+      currentMaxDepth = Math.floor(Math.random() * MAX_DEPTH);
+    } else {
+      outputPath = `${previousPath}/${currentSlug}`;
+      if (currentSibling === 0) {
+        currentMaxSibling = Math.floor(Math.random() * MAX_SIBLINGS);
+      }
+    }
+
+    // const
+
     fs.copySync(
       path.join(process.cwd(), `public/page-data/lorem/page-data.json`),
-      path.join(
-        process.cwd(),
-        `public/page-data/${faker.helpers
-          .slugify(faker.lorem.sentence())
-          .toLowerCase()}/page-data.json`
-      )
+      path.join(process.cwd(), outputPath, `page-data.json`)
     );
+
+    if (currentSibling < currentMaxSibling) {
+      currentSibling++;
+    } else {
+      previousPath = outputPath;
+      currentSibling = 0;
+
+      if (currentDepth < currentMaxDepth) {
+        currentDepth++;
+      } else {
+        currentDepth = 0;
+      }
+    }
     progress.tick();
   }
 
