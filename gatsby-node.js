@@ -2,6 +2,8 @@ const path = require(`path`);
 const { createFilePath } = require(`gatsby-source-filesystem`);
 const { generate } = require(`./gen-md`);
 const { runCompare } = require(`./compare`);
+const faker = require(`faker`);
+const fs = require("fs-extra");
 
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions;
@@ -67,6 +69,24 @@ exports.onPreBootstrap = () => {
   generate();
 };
 
-exports.onPostBuild = async () => {
+exports.onPostBuild = async ({ reporter }) => {
+  const N = parseInt(process.env.N, 10) || 100;
+  const progress = reporter.createProgress(`cloning page-data`, N);
+  progress.start();
+
+  for (let i = 1; i < N; i++) {
+    fs.copySync(
+      path.join(process.cwd(), `public/page-data/lorem/page-data.json`),
+      path.join(
+        process.cwd(),
+        `public/page-data/${faker.helpers
+          .slugify(faker.lorem.sentence())
+          .toLowerCase()}/page-data.json`
+      )
+    );
+    progress.tick();
+  }
+
+  progress.end();
   await runCompare();
 };

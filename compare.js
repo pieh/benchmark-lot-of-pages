@@ -28,12 +28,16 @@ function compareResults(r1, r2) {
 }
 
 async function runCompare() {
-  console.log(`Checking correctness`);
+  console.log(
+    `Checking correctness and printing timing info for single runs (proper benchmarks might time out here :S)`
+  );
 
   const results = {};
 
   for (const [type, fn] of Object.entries(finders)) {
+    console.time(type);
     const result = await fn();
+    console.timeEnd(type);
     if (Array.isArray(result)) {
       results[type] = new Set(result);
     } else {
@@ -89,16 +93,10 @@ async function runCompare() {
         console.log("Fastest is " + this.filter("fastest").map("name"));
         resolve();
       })
-      // run async
-      .run(
-        // { async: true }
-        {
-          defer: true,
-        }
-      );
+      .run({
+        defer: true,
+      });
   });
-
-  // debugger;
 }
 
 exports.runCompare = runCompare;
