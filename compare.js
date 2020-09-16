@@ -4,13 +4,16 @@ const {
   run: nodelibFsWalkRun,
 } = require(`./page-data-finders/nodelib-fs-walk-test`);
 const { run: readdirpRun } = require(`./page-data-finders/readdirp-test`);
+const { run: cliFindRun } = require(`./page-data-finders/cli-find`);
 const Benchmark = require("benchmark");
+const fs = require(`fs-extra`);
 
 const finders = {
   "fs-extra": fsRun,
   globby: globRun,
   "@nodelib/fs-walk": nodelibFsWalkRun,
   readdirp: readdirpRun,
+  "cli-find": cliFindRun,
 };
 
 function compareResults(r1, r2) {
@@ -36,13 +39,24 @@ async function runCompare() {
 
   for (const [type, fn] of Object.entries(finders)) {
     console.time(type);
-    const result = await fn();
+    let result = await fn();
     console.timeEnd(type);
+    if (type === `cli-find`) {
+      result = result.map((f) => f.replace(/^\.\//, `public/page-data/`));
+    }
     if (Array.isArray(result)) {
       results[type] = new Set(result);
     } else {
       results[type] = result;
     }
+
+    fs.outputJsonSync(
+      `public/_results/${type}.json`,
+      results[type] ? Array.from(results[type]) : [],
+      {
+        spaces: 2,
+      }
+    );
   }
 
   let areAllTheSameResults = true;
@@ -70,7 +84,7 @@ async function runCompare() {
   console.log("Running benchmark");
 
   const suite = new Benchmark.Suite({
-    minSamples: 150,
+    minSamples: 50,
   });
 
   for (const [type, fn] of Object.entries(finders)) {
