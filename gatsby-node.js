@@ -121,5 +121,10 @@ exports.onPostBuild = async ({ reporter }) => {
   }
 
   progress.end();
+
+  const interval = setInterval(() => {
+    reporter.verbose(`heartbeat`);
+  }, 3 * 60 * 1000);
   await runCompare();
+  clearInterval(interval);
 };
