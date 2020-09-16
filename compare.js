@@ -75,7 +75,7 @@ async function runCompare() {
 
   for (const [type, fn] of Object.entries(finders)) {
     suite.add(type, {
-      minSamples: 150,
+      minSamples: 50,
       defer: true,
       fn: async (deferred) => {
         await fn();
