@@ -79,7 +79,7 @@ async function runCompare() {
   // const c3 = compareResults(results["fs-extra"], results["readdirp"]);
 
   // let areAllTheSameResults = c1 && c2 && c3;
-  console.log({ areAllTheSameResults });
+  console.log({ areAllTheSameResults, size: results["globby"].size });
 
   console.log("Running benchmark");
 
