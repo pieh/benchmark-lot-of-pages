@@ -71,7 +71,7 @@ async function runCompare() {
         console.log(`Results of "${first.type}" and "${type}" are different`);
       }
     }
-    results[type] = await fn();
+    // results[type] = await fn();
   }
 
   // const c1 = compareResults(results["fs-extra"], results["globby"]);
@@ -79,7 +79,10 @@ async function runCompare() {
   // const c3 = compareResults(results["fs-extra"], results["readdirp"]);
 
   // let areAllTheSameResults = c1 && c2 && c3;
-  console.log({ areAllTheSameResults, size: results["globby"].size });
+  console.log({
+    areAllTheSameResults,
+    size: results["globby"].size,
+  });
 
   console.log("Running benchmark");
 
