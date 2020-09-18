@@ -71,8 +71,14 @@ exports.onPreBootstrap = () => {
 
 exports.onPostBuild = async ({ reporter }) => {
   const N = parseInt(process.env.N, 10) || 100;
-  const MAX_DEPTH = parseInt(process.env.MAX_DEPTH, 10) || 4;
-  const MAX_SIBLINGS = Math.sqrt(N);
+  const MAX_DEPTH = process.env.MAX_DEPTH
+    ? parseInt(process.env.MAX_DEPTH, 10)
+    : 4;
+  const MAX_SIBLINGS = process.env.MAX_SIBLINGS
+    ? parseInt(process.env.MAX_SIBLINGS, 10)
+    : Math.sqrt(N);
+
+  console.log({ N, MAX_DEPTH, MAX_SIBLINGS });
 
   const progress = reporter.createProgress(`cloning page-data`, N - 1);
   progress.start();
